@@ -20,14 +20,14 @@
 #include <ArduinoJson.h>
 
 #define ARDUINOJSON_V5132   ((ARDUINOJSON_VERSION_MAJOR) == 5 && (ARDUINOJSON_VERSION_MINOR) == 13 && (ARDUINOJSON_VERSION_REVISION) == 2)
-#define ARDUINOJSON_V6113   ((ARDUINOJSON_VERSION_MAJOR) == 6 && (ARDUINOJSON_VERSION_MINOR) == 14 && (ARDUINOJSON_VERSION_REVISION) == 1)
+#define ARDUINOJSON_V6113   ((ARDUINOJSON_VERSION_MAJOR) == 6)
 
 #if ARDUINOJSON_V6113
 StaticJsonDocument<1024> root;
 #elif ARDUINOJSON_V5132
 StaticJsonBuffer<1024> jsonBuffer;
 #else
-#error "No support Arduinojson version ,please use ArduinoJsonV6.14.1 or ArduinoJsonV5.13.2"
+#error "No support Arduinojson version ,please use ArduinoJsonV6.11 later or ArduinoJsonV5.13.2"
 #endif
 
 /////////////////////////////////////////////////////////////////
@@ -487,11 +487,12 @@ bool BIGIOT::uploadPhoto( const char *id, const char *type, const char *filename
     content_len = size;
     size_t offset = 0;
     size_t ret = 0;
+    long old=millis();
     while (1) {
         ret = client.write(image + offset, content_len);
         offset += ret;
         content_len -= ret;
-        if (size == offset) {
+        if (size == offset || millis() - old > 30000) {
             break;
         }
         delay(1);
@@ -579,6 +580,33 @@ bool BIGIOT::upload(const char *id[], const char *data[], int len)
     }
     String json;
 
+#if ARDUINOJSON_V6113
+    serializeJson(root, json);
+#elif ARDUINOJSON_V5132
+    root.printTo(json);
+#endif
+    json += "\n";
+    _client->print(json);
+    DEBUG_BIGIOTCIENT("Send:%s", json);
+    return true;
+}
+
+/////////////////////////////////////////////////////////////////
+bool BIGIOT::sayToClient(const char *client_id, const char *content)
+{
+    if (!_isLogin || !client_id || !content)return false;
+#if ARDUINOJSON_V6113
+    root.clear();
+#elif ARDUINOJSON_V5132
+    jsonBuffer.clear();
+    JsonObject &root = jsonBuffer.createObject();
+#endif
+
+    root["M"] = "say";
+    root["ID"] = client_id;
+    root["C"] = content;
+
+    String json;
 #if ARDUINOJSON_V6113
     serializeJson(root, json);
 #elif ARDUINOJSON_V5132

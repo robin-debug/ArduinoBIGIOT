@@ -19,7 +19,7 @@
 #endif
 
 #define BIGIOT_PLATFORM_HOST                      "www.bigiot.net"
-#define BIGIOT_PLATFORM_PORT                      8282
+#define BIGIOT_PLATFORM_PORT                      8181 /*8282*/
 #define BIGIOT_PLATFORM_HTTPS_PORT                443
 #define BIGIOT_LOGINT_WELCOME                     1
 #define BIGIOT_LOGINT_CHECK_IN                    2
@@ -120,6 +120,8 @@ public:
 
          sendAlarm(const char *method, const char *message),
          sendAlarm(String method, String message);
+
+    bool sayToClient(const char *client_id, const char *content);
 
     bool operator == (BIGIOT &b);
     bool isOnline();
