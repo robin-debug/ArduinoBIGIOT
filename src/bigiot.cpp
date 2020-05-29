@@ -20,14 +20,14 @@
 #include <ArduinoJson.h>
 
 #define ARDUINOJSON_V5132   ((ARDUINOJSON_VERSION_MAJOR) == 5 && (ARDUINOJSON_VERSION_MINOR) == 13 && (ARDUINOJSON_VERSION_REVISION) == 2)
-#define ARDUINOJSON_V6113   ((ARDUINOJSON_VERSION_MAJOR) == 6 && (ARDUINOJSON_VERSION_MINOR) == 14 && (ARDUINOJSON_VERSION_REVISION) == 1)
+#define ARDUINOJSON_V6113   ((ARDUINOJSON_VERSION_MAJOR) == 6)
 
 #if ARDUINOJSON_V6113
 StaticJsonDocument<1024> root;
 #elif ARDUINOJSON_V5132
 StaticJsonBuffer<1024> jsonBuffer;
 #else
-#error "No support Arduinojson version ,please use ArduinoJsonV6.14.1 or ArduinoJsonV5.13.2"
+#error "No support Arduinojson version ,please use ArduinoJsonV6.11 later or ArduinoJsonV5.13.2"
 #endif
 
 /////////////////////////////////////////////////////////////////
