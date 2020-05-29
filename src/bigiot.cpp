@@ -114,20 +114,20 @@ int BIGIOT::packetParse(String pack)
 #endif
 
     const char *m = (const char *)root["M"];
-    const char *salve = (const char *)root["S"];
+    const char *user = (const char *)root["ID"];//S
     if (!strcmp(m, "say")) {
         const char *s = (const char *)root["C"];
         for (int i = 0; i < PLATFORM_ARRAY_SIZE(platform_command); ++i) {
             if (!strcmp(s, platform_command[i])) {
                 if (_eventCallback) {
-                    _eventCallback(_dev.toInt(), i, platform_command[i], salve);
+                    _eventCallback(_dev.toInt(), i, platform_command[i], user);
                 }
                 return i + 1;
             }
         }
-        // const char *salve = (const char *)root["S"];
+        // const char *user = (const char *)root["S"];
         if (_eventCallback) {
-            _eventCallback(_dev.toInt(), CUSTOM, s, salve);
+            _eventCallback(_dev.toInt(), CUSTOM, s, user);
         }
     }
     /*else if (!strcmp(m, "checkout")) {
